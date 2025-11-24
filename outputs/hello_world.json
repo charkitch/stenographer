@@ -1,0 +1,12 @@
+{
+  "language": "en",
+  "language_probability": 0.8831720948219299,
+  "text": "Hello world. That's right. Hello world. Hello world. Goodbye world. Hello world.",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 9.0,
+      "text": "Hello world. That's right. Hello world. Hello world. Goodbye world. Hello world."
+    }
+  ]
+}

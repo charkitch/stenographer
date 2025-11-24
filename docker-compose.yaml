@@ -1,0 +1,15 @@
+services:
+  whisper-api:
+    build:
+      context: .
+      # if Docker ever gets confused on M2, this keeps it arm:
+      # platform: linux/arm64
+    platform: linux/arm64
+    environment:
+      WHISPER_MODEL: medium    # e.g. tiny, small, medium, large-v3
+      WHISPER_COMPUTE_TYPE: int8
+    volumes:
+      # Hugging Face cache so models persist between runs
+      - ${HOME}/.cache/huggingface:/root/.cache/huggingface
+    ports:
+      - "8000:8000"
