@@ -1,6 +1,6 @@
-##
+## Overview
 
-To query locally using python script, you can use the following commands:
+A simple dockerless transcription tool using OpenAI's WHisper model. Gets transcription, but not speaker labels.
 
 ```python
 python3 -m venv venv
