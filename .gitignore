@@ -1,0 +1,4 @@
+venv
+
+# ignore outputs so we don't commit private transcripts
+outputs

@@ -1,25 +1,23 @@
-
+#!/usr/bin/env python3
 import os
 import sys
 import json
 import requests
 
-API_URL = "http://localhost:8000/transcribe"
-OUTPUT_DIR = "outputs"
+"""
+Python script to mirror:
 
-"""Python script to mirror this curl, and 
-  
   curl -X POST "http://localhost:8000/transcribe" \
-  -H "accept: application/json" \
-  -H "Content-Type: multipart/form-data" \
-  -F "file=@{our movie path}" \
-  | jq .
-  
-  Usage: python3 transcribe_local.py ~/Movies/hello_world.mov
+    -H "accept: application/json" \
+    -H "Content-Type: multipart/form-data" \
+    -F "file=@{our movie path}" \
+    | jq .
+
+Usage:
+    python3 transcribe_local.py ~/Movies/hello_world.mov
 """
 
-
-API_URL = "http://localhost:8000/transcribe"
+API_URL = os.environ.get("WHISPER_API_URL", "http://localhost:8000/transcribe")
 OUTPUT_DIR = "outputs"
 
 
@@ -37,13 +35,16 @@ def main():
     # Ensure outputs directory exists
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    # Build output JSON filename
+    # Build base output names
     base = os.path.basename(input_path)
     name_no_ext = os.path.splitext(base)[0]
-    output_path = os.path.join(OUTPUT_DIR, f"{name_no_ext}.json")
+    json_output_path = os.path.join(OUTPUT_DIR, f"{name_no_ext}.json")
+    txt_output_path = os.path.join(OUTPUT_DIR, f"{name_no_ext}.txt")
 
     print(f"📤 Sending file to whisper API: {input_path}")
-    print(f"📥 Will save full JSON to: {output_path}")
+    print(f"🌐 API URL: {API_URL}")
+    print(f"📥 Will save JSON to: {json_output_path}")
+    print(f"📄 Will save TXT transcript to: {txt_output_path}")
 
     # Send file
     with open(input_path, "rb") as f:
@@ -60,12 +61,29 @@ def main():
 
     data = response.json()
 
-    with open(output_path, "w", encoding="utf-8") as out:
+    # Save JSON exactly as returned by the API
+    with open(json_output_path, "w", encoding="utf-8") as out:
         json.dump(data, out, indent=2, ensure_ascii=False)
 
+    # Use the top-level "text" field as the plain transcript
+    transcript_text = ""
+    if isinstance(data, dict) and isinstance(data.get("text"), str):
+        transcript_text = data["text"]
+    else:
+        # Fallback: join segment texts if "text" is missing or weird
+        segments = data.get("segments", []) if isinstance(data, dict) else []
+        pieces = []
+        for seg in segments:
+            if isinstance(seg, dict) and "text" in seg:
+                pieces.append(seg["text"].strip())
+        transcript_text = "\n".join(pieces)
+
+    with open(txt_output_path, "w", encoding="utf-8") as out:
+        out.write(transcript_text)
+
     print("✅ Done!")
-    print(f"📄 Full JSON transcript saved at:")
-    print(f"   {output_path}")
+    print(f"📄 Full JSON transcript saved at: {json_output_path}")
+    print(f"📝 Plain-text transcript saved at: {txt_output_path}")
 
 
 if __name__ == "__main__":

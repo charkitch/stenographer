@@ -6,7 +6,7 @@ services:
       # platform: linux/arm64
     platform: linux/arm64
     environment:
-      WHISPER_MODEL: medium    # e.g. tiny, small, medium, large-v3
+      WHISPER_MODEL: large-v3   # e.g. tiny, small, medium, large-v3
       WHISPER_COMPUTE_TYPE: int8
     volumes:
       # Hugging Face cache so models persist between runs
