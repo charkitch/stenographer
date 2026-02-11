@@ -1,4 +1,6 @@
+.venv
 venv
 
 # ignore outputs so we don't commit private transcripts
-outputs
+outputs/
+.ruff_cache/

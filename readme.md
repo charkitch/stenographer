@@ -2,11 +2,12 @@
 
 A simple dockerless transcription tool using OpenAI's WHisper model. Gets transcription, but not speaker labels.
 
-```python
-python3 -m venv venv
-source venv/bin/active
+Assuming UV is installed
 
-pip install requests
+```python
+uv venv
+source .venv/bin/activate
+uv pip sync requirements.txt 
 
 python3 transcribe_local.py <path to file>
 ```

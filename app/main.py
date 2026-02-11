@@ -2,7 +2,7 @@ import os
 import tempfile
 from typing import List
 
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 from faster_whisper import WhisperModel
 
@@ -19,7 +19,9 @@ def load_model():
     global model
     # Docker on macOS = CPU-only, so we stick to device="cpu"
     app.logger if hasattr(app, "logger") else None
-    print(f"Loading Whisper model '{MODEL_NAME}' with compute_type='{MODEL_COMPUTE_TYPE}'")
+    print(
+        f"Loading Whisper model '{MODEL_NAME}' with compute_type='{MODEL_COMPUTE_TYPE}'"
+    )
     try:
         # this will download the model once into the HF cache volume
         model = WhisperModel(MODEL_NAME, device="cpu", compute_type=MODEL_COMPUTE_TYPE)
